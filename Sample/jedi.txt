@@ -1,0 +1,2 @@
+Obi Wan             Kenobi    jedi master         defender       100   
+yoda                          jedi master         tactician      200   

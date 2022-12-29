@@ -1,0 +1,6 @@
+JediMaster,This is a student record\nfor the school
+firstName,0,20,String
+lastName,21,40,String
+level,41,50,String
+jediClass,51,60,String
+age,61,70,int
