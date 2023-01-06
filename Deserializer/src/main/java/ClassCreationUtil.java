@@ -3,11 +3,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import ClassUtils.CustomClassLoader;
+
 public class ClassCreationUtil {
 	
 	static final String mainDir = "src\\main\\java\\";
+	static CustomClassLoader ccl = new CustomClassLoader();
 
-	public String deSerializationClassCreation(List contents, String objName, String methodName) throws FileNotFoundException, IOException {
+	public String deSerializationClassCreation(List contents, String objName, String methodName) throws FileNotFoundException, IOException, ClassNotFoundException {
 		StringBuffer sbDe = new StringBuffer();
 		String deObj = objName + "Deserializer";
 		sbDe.append("public class " + deObj + "{");
@@ -27,12 +30,13 @@ public class ClassCreationUtil {
 		System.out.println(sbDe);
 		FileOutputStream fos2 = new FileOutputStream(mainDir + deObj + ".java");
 		fos2.write(sbDe.toString().getBytes());
+		
 		fos2.flush();
 		fos2.close();
 		return deObj;
 	}
 
-	public void objectCreation(List contents, String objName) throws FileNotFoundException, IOException {
+	public String objectCreation(List contents, String objName) throws FileNotFoundException, IOException {
 		StringBuffer sb = new StringBuffer();
 		sb.append("public class " + objName + "{");
 		for (int i = 0; i < contents.size(); i++) {
@@ -45,6 +49,8 @@ public class ClassCreationUtil {
 		fos.write(sb.toString().getBytes());
 		fos.flush();
 		fos.close();
+		
+		return objName;
 	}
 
 }

@@ -8,24 +8,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+
+import ClassUtils.CustomClassLoader;
 
 
 public class ClassCreation {
 
 	static String methodName = "parse";
-	static String processingFileName = "jedi.txt";
+	static String processingFileName = "src\\main\\resources\\jedi.txt";
 	static ClassCreationUtil ccu = new ClassCreationUtil();
-
+	static CustomClassLoader ccl = new CustomClassLoader();
+	Logger logger  = Logger.getLogger(ClassCreation.class.getName());
+	
 	static void classGenerator(String dir) throws Throwable {
 		BufferedReader bf = null;
 		BufferedReader jediBf = null;
 		try {
 			File csv = new File(dir);
 			bf = new BufferedReader(new FileReader(csv));
-
+			Field[] fi = Contents.class.getFields();
 			String line = "";
 			List contents = new ArrayList<>();
 			int track = 0;
+			int firstIndex = 0 ;
+			int lastIndex = 0;
 			String objName = null;
 			while ((line = bf.readLine()) != null) {
 				String[] lineArr = line.split(",");
@@ -33,28 +40,42 @@ public class ClassCreation {
 					objName = lineArr[0];
 				} else {
 					int i = 0;
+					
+					if(lineArr.length < fi.length) {
+						throw new StringIndexOutOfBoundsException("Invalid Index [L"+track+"]");
+					}
+					for(String fieldContent : lineArr) {
+						if(fieldContent.isBlank()) {
+							throw new Exception("Empty Column at [L"+track+"]");
+						}
+						
+					}
+					
 					Contents c = new Contents();
 					c.setColumnName(lineArr[i++]);
 					c.setFirstIndex(lineArr[i++]);
 					c.setLastIndex(lineArr[i++]);
 					c.setDataType(lineArr[i++]);
+					if(track > 1) {
+						isInteger(c.getFirstIndex(), "first index", track);
+						isInteger(c.getLastIndex(), "last index", track);
+						if(Integer.valueOf(c.getFirstIndex()) - lastIndex > 1) {
+							System.out.println("First Index is not an incremental of the previous index [L"+track+"]");
+						}
+					}
+					firstIndex = Integer.valueOf(c.getFirstIndex());
+					lastIndex = Integer.valueOf(c.getLastIndex());
 					contents.add(c);
 				}
 
 				track++;
 			}
 
-			ccu.objectCreation(contents, objName);
+			String className = ccu.objectCreation(contents, objName);
 			String deObj = ccu.deSerializationClassCreation(contents, objName, methodName);
 
-			// To process the jedi text file into the newly created classes
-			// I'm not sure how to arrange the files since the deserialization is using substring. Like yoda's last name supposed to be
-			// empty so skip and put the jedi master into level instead of last name
-			
-			//I think i've been wasting a lot of time on this as java won't be able to refresh it's directory so this will not be able to detect 
-			//If we would have another chance I would be honored to learn more from you guys. 
-			//Thank you for the fun assignment, I've learnt a lot that I did not know before just from this.
-			Class cl = Class.forName(deObj);
+//			Class cl = Class.forName(deObj);
+			Class cl = ccl.findClass(deObj);
 			Object obje = cl.newInstance();
 			File jediCsv = new File(processingFileName);
 			jediBf = new BufferedReader(new FileReader(jediCsv));
@@ -97,6 +118,15 @@ public class ClassCreation {
 		} 
 
 	}
+	
+	public static void isInteger( String input, String columnName, int row ) {
+	    try {
+	        Integer.parseInt( input );
+	    }
+	    catch( NumberFormatException e ) {
+	        throw new NumberFormatException(columnName+ " at row "+ row+ " must be Integer.");
+	    }
+	}
 
 	// public class StudentDeserialiser {
 	// public Student parse(String lineFeed) {
@@ -109,7 +139,7 @@ public class ClassCreation {
 	// }
 	// }
 	public static void main(String args[]) throws Throwable {
-		String fileDir = "schema.txt";
+		String fileDir = "src\\main\\resources\\schema.txt";
 
 		try {
 			classGenerator(fileDir);
