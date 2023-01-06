@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class ClassCreationUtil {
+	
+	static final String mainDir = "src\\main\\java\\";
 
 	public String deSerializationClassCreation(List contents, String objName, String methodName) throws FileNotFoundException, IOException {
 		StringBuffer sbDe = new StringBuffer();
@@ -23,7 +25,7 @@ public class ClassCreationUtil {
 		}
 		sbDe.append("\n return record; \n } \n}");
 		System.out.println(sbDe);
-		FileOutputStream fos2 = new FileOutputStream("src\\" + deObj + ".java");
+		FileOutputStream fos2 = new FileOutputStream(mainDir + deObj + ".java");
 		fos2.write(sbDe.toString().getBytes());
 		fos2.flush();
 		fos2.close();
@@ -39,7 +41,7 @@ public class ClassCreationUtil {
 		}
 		sb.append("\n }");
 		System.out.println(sb);
-		FileOutputStream fos = new FileOutputStream("src\\" + objName + ".java");
+		FileOutputStream fos = new FileOutputStream(mainDir + objName + ".java");
 		fos.write(sb.toString().getBytes());
 		fos.flush();
 		fos.close();
