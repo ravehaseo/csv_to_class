@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import ClassUtils.CustomClassLoader;
+import ClassUtils.MethodUtils;
 
 
 public class ClassCreation {
@@ -19,6 +20,7 @@ public class ClassCreation {
 	static String processingFileName = "src\\main\\resources\\jedi.txt";
 	static ClassCreationUtil ccu = new ClassCreationUtil();
 	static CustomClassLoader ccl = new CustomClassLoader();
+	static MethodUtils mu = new MethodUtils();
 	Logger logger  = Logger.getLogger(ClassCreation.class.getName());
 	
 	static void classGenerator(String dir) throws Throwable {
@@ -71,29 +73,10 @@ public class ClassCreation {
 				track++;
 			}
 
-			String className = ccu.objectCreation(contents, objName);
-			String deObj = ccu.deSerializationClassCreation(contents, objName, methodName);
-
+			String className = ccu.velocityObjectCreation(contents, objName);
+			String deObj = ccu.velocityDeserialClassCreation(contents, objName, methodName);
 //			Class cl = Class.forName(deObj);
-			Class cl = ccl.findClass(deObj);
-			Object obje = cl.newInstance();
-			File jediCsv = new File(processingFileName);
-			jediBf = new BufferedReader(new FileReader(jediCsv));
-			String newLine = "";
-			List jediLs = new ArrayList<>();
-			while ((newLine = jediBf.readLine()) != null) {
-
-				Method method = obje.getClass().getMethod(methodName, String.class);
-				jediLs.add(method.invoke(obje, newLine));
-
-			}
-			for (int i = 0; i < jediLs.size(); i++) {
-				Object object = (Object) jediLs.get(i);
-				Field[] fields = object.getClass().getDeclaredFields();
-				for (Field field : fields) {
-					System.out.println(field.getName() + ": " + field.get(object));
-				}
-			}
+			jediBf = mu.methodImplementation(deObj, processingFileName);
 
 			bf.close();
 			jediBf.close();
@@ -118,6 +101,8 @@ public class ClassCreation {
 		} 
 
 	}
+
+	
 	
 	public static void isInteger( String input, String columnName, int row ) {
 	    try {

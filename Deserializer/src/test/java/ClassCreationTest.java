@@ -27,7 +27,7 @@ public class ClassCreationTest {
 	static CustomClassLoader ccl = new CustomClassLoader();
 
 	@BeforeAll
-	public static void setUp() throws FileNotFoundException, IOException {
+	public static void setUp() throws FileNotFoundException, IOException, ClassNotFoundException {
 
 		csv = new File(csvFile);
 		bf = new BufferedReader(new FileReader(csv));
@@ -50,7 +50,7 @@ public class ClassCreationTest {
 
 			track++;
 		}
-		ccu.objectCreation(contents, objName);
+		ccu.velocityObjectCreation(contents, objName);
 		bf.close();
 	}
 
@@ -74,7 +74,7 @@ public class ClassCreationTest {
 	@DisplayName("Test ClassNotExist")
 	public void classNotExists() throws Exception {
 		//		 String objName = "TestDisable";
-		ccu.objectCreation(contents, "OtherName");
+		ccu.velocityObjectCreation(contents, "OtherName");
 //		expectedEx.expect(ClassNotFoundException.class);
 		ClassNotFoundException classNotFound = assertThrows(ClassNotFoundException.class, () -> {				
 			Class cl = Class.forName("TestDisable");

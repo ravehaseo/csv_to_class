@@ -1,4 +1,4 @@
-public class JediMaster {
+public class OtherName {
     public String firstName;
     public String lastName;
     public String level;

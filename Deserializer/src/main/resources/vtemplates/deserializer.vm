@@ -1,0 +1,11 @@
+public class ${className} {
+
+ public ${objName} ${methodName}(String lineFeed) {
+   ${objName} records = new ${objName}();
+   #foreach( $property in $properties )
+    records.${property.fieldName} = ${property.trim};
+   #end
+   return records;
+ }
+}
+

@@ -1,0 +1,6 @@
+public class ${className} {
+   #foreach( $property in $properties )
+ public ${property.fieldType} ${property.fieldName};
+   #end 
+}
+
